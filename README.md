@@ -24,4 +24,8 @@ Check the issues on this GitHub repository to see if it's already there. If not,
 
 ## Changelog
 
-- 0.1: First version.
+- 0.1: 
+  - First version.
+- 0.2: 
+  - Fixed module.js not being included in module.zip, therefore there was no code to load
+  - Moved module.js to scripts/module.js

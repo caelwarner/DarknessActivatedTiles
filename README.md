@@ -4,7 +4,7 @@ Darkness Activated Tiles allows tiles to be hidden when the darkness level in a 
 
 ## Installation
 
-Installation can be done with either ~~Foundry's built-in module browser~~ (coming soon) or by using the URL below:
+Installation can be done with either Foundry's built-in module browser or by using the URL below:
 
 > https://github.com/caelwarner/darkness-activated-tiles/releases/download/0.1.0/module.json
 

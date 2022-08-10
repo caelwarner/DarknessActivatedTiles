@@ -35,10 +35,18 @@ class DarknessActivatedTiles {
 
         html.find(`input[name="${DAT.SCOPE}.min"]`).prop("value", flags.min);
         html.find(`input[name="${DAT.SCOPE}.max"]`).prop("value", flags.max);
+        
+        
+        if (data.document.data.flags[DAT.SCOPE].min == null) {
+            data.document.data.flags[DAT.SCOPE].min = 0;
+        }
     }
 
     onPreUpdateTile(tile, change, options, userId) {
         if (change[DAT.SCOPE]) {
+            if (change[DAT.SCOPE].min == null) tile.setFlag(DAT.SCOPE, "min", 0);
+            if (change[DAT.SCOPE].min == 0) tile.setFlag(DAT.SCOPE, "min", 0);
+
             if (change[DAT.SCOPE].min) tile.setFlag(DAT.SCOPE, "min", change[DAT.SCOPE].min);
             if (change[DAT.SCOPE].max) tile.setFlag(DAT.SCOPE, "max", change[DAT.SCOPE].max);
         }
@@ -46,8 +54,8 @@ class DarknessActivatedTiles {
 
     onPreCreateTile(tile, data, options, userId) {
         Hooks.once("createTile", (tile, options, userId) => {
-            tile.setFlag(DAT.SCOPE, "min", data[DAT.SCOPE].min);
-            tile.setFlag(DAT.SCOPE, "max", data[DAT.SCOPE].max);
+            tile.setFlag(DAT.SCOPE, "min", 0);
+            tile.setFlag(DAT.SCOPE, "max", 1);
         });
     }
 

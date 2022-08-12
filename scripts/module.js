@@ -18,6 +18,7 @@ class DarknessActivatedTiles {
         html.find(`div[data-tab="basic"] .form-group`).last().after(contents);
 
         config.activateListeners(html);
+        config.setPosition({ height: "auto", width: "auto" });
     }
 
     onLightingRefresh(lighting) {

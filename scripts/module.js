@@ -1,20 +1,17 @@
-const DAT = {
-    SCOPE: "darkness-activated-tiles",
-    LOG_PREFIX: "Darkness Activated Tiles | "
-};
-
 class DarknessActivatedTiles {
+    static ID = "darkness-activated-tiles";
+
     constructor() {
         Hooks.on("renderTileConfig", this.onRenderTileConfig.bind(this));
         Hooks.on("lightingRefresh", this.onLightingRefresh.bind(this));
     }
 
     async onRenderTileConfig(config, html, tile) {
-        if (!config.object.getFlag(DAT.SCOPE, "darkness"))
+        if (!config.object.getFlag(DarknessActivatedTiles.ID, "darkness"))
             // Can't use setFlag because at this point the tile doesn't have an id yet
-            tile.data.flags[DAT.SCOPE] = { "darkness": { "min": 0, "max": 1 }};
+            tile.data.flags[DarknessActivatedTiles.ID] = { "darkness": { "min": 0, "max": 1 }};
 
-        const contents = await renderTemplate(`modules/${DAT.SCOPE}/templates/tile-darkness-range.hbs`, tile);
+        const contents = await renderTemplate(`modules/${DarknessActivatedTiles.ID}/templates/tile-darkness-range.hbs`, tile);
         html.find(`div[data-tab="basic"] .form-group`).last().after(contents);
 
         config.activateListeners(html);
@@ -27,12 +24,12 @@ class DarknessActivatedTiles {
         }
 
         canvas.background.tiles.forEach(tile => {
-            const darknessRange = tile.document.getFlag(DAT.SCOPE, "darkness");
+            const darknessRange = tile.document.getFlag(DarknessActivatedTiles.ID, "darkness");
 
             tile.document.update({ hidden: lighting.darknessLevel < darknessRange.min || lighting.darknessLevel > darknessRange.max })
         });
     }
 }
 
-console.log(DAT.LOG_PREFIX, "Loaded");
+console.log("Darkness Activated Tiles | Loaded");
 Hooks.once("init", () => game.darknessActivatedTiles = new DarknessActivatedTiles());

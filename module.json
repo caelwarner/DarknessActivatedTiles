@@ -5,8 +5,10 @@
   "version": "This is auto replaced",
   "library": "false",
   "manifestPlusVersion": "1.0.0",
-  "minimumCoreVersion": "0.8.0",
-  "compatibleCoreVersion": "0.8.8",
+  "compatibility": {
+    "minimum": "10",
+    "verified": "10.285"
+  },
   "authors": [
     {
       "name": "Cael Warner",

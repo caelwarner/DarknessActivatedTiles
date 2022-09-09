@@ -1,3 +1,4 @@
 {
-    "darkness-activated-tiles.DarknessRangeHint": "You may specify a range of darkness levels during which this tile will be visible."
+    "darkness-activated-tiles.DarknessRangeHint": "You may specify a range of darkness levels during which this tile will be visible.",
+    "darkness-activated-tiles.Enabled": "Enabled"
 }

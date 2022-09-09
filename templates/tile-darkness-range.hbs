@@ -1,6 +1,9 @@
+<hr />
 <div class="form-group slim">
 	<label>{{ localize "LIGHT.DarknessRange" }}</label>
 	<div class="form-fields">
+        <label>{{ localize "darkness-activated-tiles.Enabled" }}</label>
+        <input type="checkbox" name="flags.darkness-activated-tiles.darkness.enabled" {{ checked data.flags.darkness-activated-tiles.darkness.enabled }}>
 		<label>{{ localize "Between" }}</label>
 		{{ numberInput data.flags.darkness-activated-tiles.darkness.min name="flags.darkness-activated-tiles.darkness.min" placeholder="0" min=0 max=1 }}
 		<label>{{ localize "and" }}</label>

@@ -1,6 +1,6 @@
 # Darkness Activated Tiles
 
-![GitHub all releases](https://img.shields.io/github/downloads/caelwarner/darkness-activated-tiles/total?style=for-the-badge) ![FoundryVTT Version](https://img.shields.io/badge/FoundryVTT-v0.8.8-orange?style=for-the-badge) ![GitHub License](https://img.shields.io/github/license/caelwarner/darkness-activated-tiles?color=blue&style=for-the-badge)
+![GitHub all releases](https://img.shields.io/github/downloads/caelwarner/darkness-activated-tiles/total?style=for-the-badge) ![FoundryVTT Version](https://img.shields.io/badge/FoundryVTT-v10-orange?style=for-the-badge) ![GitHub License](https://img.shields.io/github/license/caelwarner/darkness-activated-tiles?color=blue&style=for-the-badge)
 
 Darkness Activated Tiles allows tiles to be hidden when the darkness level in a scene goes outside a customizable range. It works the same as the darkness activation range works with ambient lights and sounds.
 

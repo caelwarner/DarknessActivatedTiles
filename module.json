@@ -7,12 +7,12 @@
   "manifestPlusVersion": "1.0.0",
   "compatibility": {
     "minimum": "10",
-    "verified": "10.285"
+    "verified": "11.305"
   },
   "authors": [
     {
       "name": "Cael Warner",
-      "discord": "CaelTheQuail#8956"
+      "discord": "caelwarner"
     }
   ],
   "dependencies": [

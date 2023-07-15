@@ -15,7 +15,7 @@ Using Darkness Activated Tiles is simple. In a tile config menu, under the **Bas
 
 Installation can be done with either Foundry's built-in module browser or by using the URL below:
 
-> https://github.com/caelwarner/darkness-activated-tiles/releases/download/1.0.0/module.json
+> https://github.com/caelwarner/darkness-activated-tiles/releases/download/1.1.0/module.json
 
 Remember to enable the module in the **Manage Modules** menu in Foundry.
 

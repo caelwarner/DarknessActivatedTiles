@@ -3,6 +3,7 @@ class DarknessActivatedTiles {
 
     static init() {
         Hooks.on("renderTileConfig", this.onRenderTileConfig.bind(this));
+        Hooks.on("closeTileConfig", this.onCloseTileConfig.bind(this));
         Hooks.on("lightingRefresh", this.onLightingRefresh.bind(this));
     }
 
@@ -18,7 +19,15 @@ class DarknessActivatedTiles {
         config.setPosition({ height: "auto", width: "500" });
     }
 
-    static onLightingRefresh(lighting) {
+    static onCloseTileConfig(config, _html) {
+        const darknessRange = config.object.getFlag(this.ID, "darkness");
+
+        if (darknessRange.enabled) {
+            config.object.update({ hidden: canvas.scene.environment.darknessLevel < darknessRange.min || canvas.scene.environment.darknessLevel > darknessRange.max });
+        }
+    }
+
+    static onLightingRefresh(_lighting) {
         if (!game.user.isGM) {
             return;
         }
@@ -27,9 +36,7 @@ class DarknessActivatedTiles {
             const darknessRange = tile.getFlag(this.ID, "darkness");
 
             if (darknessRange.enabled) {
-                console.log(canvas.scene.darkness < darknessRange.min || canvas.scene.darkness > darknessRange.max);
-
-                tile.update({ hidden: canvas.scene.darkness < darknessRange.min || canvas.scene.darkness > darknessRange.max });
+                tile.update({ hidden: canvas.scene.environment.darknessLevel < darknessRange.min || canvas.scene.environment.darknessLevel > darknessRange.max });
             }
         });
     }

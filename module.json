@@ -1,25 +1,21 @@
 {
-  "name": "darkness-activated-tiles",
+  "id": "darkness-activated-tiles",
   "title": "Darkness Activated Tiles",
   "description": "Allows tiles to be hidden when the scene's darkness level is outside a certain range. Much like lights and sounds.",
   "version": "This is auto replaced",
-  "library": "false",
+  "library": false,
   "manifestPlusVersion": "1.0.0",
   "compatibility": {
-    "minimum": "10",
-    "verified": "11.305"
+    "minimum": "12",
+    "verified": "12"
   },
   "authors": [
     {
       "name": "Cael Warner",
-      "discord": "caelwarner"
+      "discord": "caelwarner",
+      "email": "caelawarner@gmail.com",
+      "url": "https://caelwarner.com"
     }
-  ],
-  "dependencies": [
-
-  ],
-  "conflicts": [
-
   ],
   "scripts": [
     "scripts/module.js"

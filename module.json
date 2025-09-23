@@ -4,10 +4,9 @@
   "description": "Allows tiles to be hidden when the scene's darkness level is outside a certain range. Much like lights and sounds.",
   "version": "This is auto replaced",
   "library": false,
-  "manifestPlusVersion": "1.0.0",
   "compatibility": {
-    "minimum": "12",
-    "verified": "12"
+    "minimum": "13",
+    "verified": "13"
   },
   "authors": [
     {
@@ -15,6 +14,12 @@
       "discord": "caelwarner",
       "email": "caelawarner@gmail.com",
       "url": "https://caelwarner.com"
+    },
+    {
+        "name": "Oxy949",
+        "discord": "Oxy949",
+        "email": "oxy949@gmail.com",
+        "url": "https://github.com/Oxy949/DarknessActivatedTiles"
     }
   ],
   "scripts": [

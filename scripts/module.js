@@ -3,6 +3,8 @@ class DarknessActivatedTiles {
   static ID = "darkness-activated-tiles";
   static DEFAULT_APPEARANCE_DURATION = 1;
   static MAX_APPEARANCE_DURATION = 60;
+  static disappearingTiles = new Set();
+  static pendingHideUpdates = new Set();
 
   static init() {
     Hooks.on("renderTileConfig", this.onRenderTileConfig.bind(this));
@@ -51,12 +53,12 @@ class DarknessActivatedTiles {
         </div>
 
         <div class="form-group">
-          <label>Appearance duration (seconds)</label>
+          <label>Fade duration (seconds)</label>
           <div class="form-fields">
             <input type="number" step="0.1" min="0" max="${this.MAX_APPEARANCE_DURATION}"
                   name="flags.${ID}.darkness.appearanceDuration" value="${appearanceDuration}">
           </div>
-          <p class="hint">How long the tile takes to fade in. Set to 0 for instant appearance.</p>
+          <p class="hint">How long the tile takes to fade in or out. Set to 0 for instant transitions.</p>
         </div>
       </fieldset>
       `;
@@ -93,23 +95,51 @@ class DarknessActivatedTiles {
   }
 
   static onLightingRefresh() {
-    if (!game.user.isGM) return;
     const level = canvas.scene?.environment?.darknessLevel ?? 0;
-    for (const tile of canvas.scene.tiles) this.applyTileVisibilityAndAlpha(tile, level);
+    for (const tile of canvas.scene.tiles) {
+      if (game.user.isGM) void this.applyTileVisibilityAndAlpha(tile, level);
+      else this.applyLocalDarknessTransition(tile, level);
+    }
   }
 
   static onUpdateTile(tile, changed) {
     if (changed.hidden === true) {
+      this.disappearingTiles.delete(this.getTileKey(tile));
       this.stopAppearanceAnimation(tile);
+      this.stopDisappearanceAnimation(tile);
       return;
     }
 
     if (changed.hidden !== false) return;
 
+    this.disappearingTiles.delete(this.getTileKey(tile));
+    this.stopDisappearanceAnimation(tile);
+
     const darkness = tile.getFlag(this.ID, "darkness");
     if (!darkness?.enabled) return;
 
     void this.animateTileAppearance(tile);
+  }
+
+  static getTileKey(tile) {
+    return `${tile.parent?.id ?? "scene"}.${tile.id}`;
+  }
+
+  static isOutsideDarknessRange(tile, level) {
+    const darkness = tile.getFlag(this.ID, "darkness");
+    if (!darkness?.enabled) return false;
+
+    const min = darkness.min ?? 0;
+    const max = darkness.max ?? 1;
+    return level < min || level > max;
+  }
+
+  static applyLocalDarknessTransition(tile, level) {
+    if (this.isOutsideDarknessRange(tile, level) && !tile.hidden) {
+      void this.animateTileDisappearance(tile);
+    } else {
+      this.cancelTileDisappearance(tile);
+    }
   }
 
   static getAppearanceDuration(tile) {
@@ -119,27 +149,50 @@ class DarknessActivatedTiles {
   }
 
   static getAppearanceAnimationName(tile) {
-    return `${this.ID}.appearance.${tile.parent?.id ?? "scene"}.${tile.id}`;
+    return `${this.ID}.appearance.${this.getTileKey(tile)}`;
+  }
+
+  static getDisappearanceAnimationName(tile) {
+    return `${this.ID}.disappearance.${this.getTileKey(tile)}`;
   }
 
   static stopAppearanceAnimation(tile) {
     foundry.canvas.animation.CanvasAnimation.terminateAnimation(this.getAppearanceAnimationName(tile));
   }
 
-  static async animateTileAppearance(tile) {
+  static stopDisappearanceAnimation(tile) {
+    foundry.canvas.animation.CanvasAnimation.terminateAnimation(this.getDisappearanceAnimationName(tile));
+  }
+
+  static cancelTileDisappearance(tile) {
+    const tileKey = this.getTileKey(tile);
+    if (!this.disappearingTiles.delete(tileKey)) return;
+
+    this.stopDisappearanceAnimation(tile);
+    if (!tile.hidden) void this.animateTileAppearance(tile, { fromCurrent: true });
+  }
+
+  static async animateTileAppearance(tile, { fromCurrent = false } = {}) {
     const placeable = tile.object;
     if (!placeable?.mesh) return;
 
-    // Apply Foundry's pending visibility flags first, then animate from fully
-    // transparent to the alpha selected in the tile configuration.
-    placeable.applyRenderFlags();
+    this.stopAppearanceAnimation(tile);
+
+    if (!fromCurrent) {
+      // Apply Foundry's pending visibility flags first, then animate from fully
+      // transparent to the alpha selected in the tile configuration.
+      placeable.applyRenderFlags();
+    }
 
     const mesh = placeable.mesh;
-    const targetAlpha = mesh.alpha;
+    const targetAlpha = fromCurrent ? Number(tile.alpha ?? 1) : mesh.alpha;
     const duration = this.getAppearanceDuration(tile) * 1000;
-    if (duration === 0 || targetAlpha <= 0) return;
+    if (!fromCurrent) mesh.alpha = 0;
 
-    mesh.alpha = 0;
+    if (duration === 0 || targetAlpha <= 0) {
+      mesh.alpha = targetAlpha;
+      return;
+    }
 
     const CanvasAnimation = foundry.canvas.animation.CanvasAnimation;
     try {
@@ -158,27 +211,86 @@ class DarknessActivatedTiles {
     }
   }
 
-  static async applyTileVisibilityAndAlpha(tile, level) {
-    const ID = this.ID;
-    const darkness = tile.getFlag(ID, "darkness");
-    if (!darkness) return;
+  static async animateTileDisappearance(tile) {
+    const placeable = tile.object;
+    if (!placeable?.mesh) return true;
 
-    const min = darkness.min ?? 0;
-    const max = darkness.max ?? 1;
-    const enabled = !!darkness.enabled;
-    const usealpha = !!darkness.usealpha;
+    const CanvasAnimation = foundry.canvas.animation.CanvasAnimation;
+    const animationName = this.getDisappearanceAnimationName(tile);
+    const runningAnimation = CanvasAnimation.getAnimation(animationName);
+    if (runningAnimation) return runningAnimation.promise;
 
-    const notVisible = enabled && (level < min || level > max);
-    const updates = {};
+    this.stopAppearanceAnimation(tile);
 
-    if (enabled) {
-      if (tile.hidden !== notVisible) updates.hidden = notVisible;
+    const mesh = placeable.mesh;
+    const duration = this.getAppearanceDuration(tile) * 1000;
+    this.disappearingTiles.add(this.getTileKey(tile));
+
+    if (duration === 0 || mesh.alpha <= 0) {
+      mesh.alpha = 0;
+      return true;
     }
 
-    if (usealpha) {
-      let baseAlpha = 1;
+    try {
+      return await CanvasAnimation.animate(
+        [{ parent: mesh, attribute: "alpha", to: 0 }],
+        {
+          name: animationName,
+          context: mesh,
+          duration,
+          easing: CanvasAnimation.easeInOutCosine
+        }
+      );
+    } catch (error) {
+      this.disappearingTiles.delete(this.getTileKey(tile));
+      if (!tile.hidden && placeable.mesh === mesh) mesh.alpha = Number(tile.alpha ?? 1);
+      console.error(`${this.ID} | Failed to animate tile disappearance`, tile, error);
+      return false;
+    }
+  }
 
-      const targetAlpha = notVisible ? 0 : baseAlpha;
+  static async applyTileVisibilityAndAlpha(tile, level) {
+    const ID = this.ID;
+    let darkness = tile.getFlag(ID, "darkness");
+    if (!darkness) return;
+
+    let notVisible = this.isOutsideDarknessRange(tile, level);
+    const tileKey = this.getTileKey(tile);
+
+    if (notVisible && !tile.hidden) {
+      if (this.pendingHideUpdates.has(tileKey)) return;
+      this.pendingHideUpdates.add(tileKey);
+
+      try {
+        const completed = await this.animateTileDisappearance(tile);
+        darkness = tile.getFlag(ID, "darkness");
+        const currentLevel = canvas.scene?.environment?.darknessLevel ?? level;
+        notVisible = this.isOutsideDarknessRange(tile, currentLevel);
+
+        if (!completed || !notVisible || tile.hidden) {
+          if (!notVisible) this.cancelTileDisappearance(tile);
+          return;
+        }
+
+        const updates = { hidden: true };
+        if (darkness?.usealpha && Math.abs(tile.alpha ?? 1) > 0.001) updates.alpha = 0;
+        await tile.update(updates);
+      } catch (error) {
+        this.cancelTileDisappearance(tile);
+        console.error(`${this.ID} | Failed to hide tile`, tile, error);
+      } finally {
+        this.pendingHideUpdates.delete(tileKey);
+      }
+      return;
+    }
+
+    this.cancelTileDisappearance(tile);
+
+    const updates = {};
+    if (darkness.enabled && tile.hidden !== notVisible) updates.hidden = notVisible;
+
+    if (darkness.usealpha) {
+      const targetAlpha = notVisible ? 0 : 1;
       if (Math.abs((tile.alpha ?? 1) - targetAlpha) > 0.001) updates.alpha = targetAlpha;
     }
 

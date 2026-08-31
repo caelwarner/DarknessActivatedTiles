@@ -9,6 +9,8 @@ Darkness Activated Tiles allows tiles to be hidden when the darkness level in a 
 ## Usage
 
 Using Darkness Activated Tiles is simple. In a tile config menu, under the **Basic** tab, there is a setting called **Darkness Activation Range**. Just clicked *Enabled* and then change the values to your liking. The tile will then only be visible whenever the darkness level in the scene is within the range or equal to the minimum/maximum.
+
+The **Appearance duration** setting controls how long a tile takes to fade in after entering its darkness range. The default is 1 second; set it to 0 for instant appearance.
 ![Tile Config](https://i.gyazo.com/114efe01cd5479b4ea87054eea276db9.png)
 
 ## Installation

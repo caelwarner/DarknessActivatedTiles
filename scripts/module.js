@@ -7,23 +7,41 @@ class DarknessActivatedTiles {
         Hooks.on("lightingRefresh", this.onLightingRefresh.bind(this));
     }
 
-    static async onRenderTileConfig(config, html, tile) {
-        if (!config.object.getFlag(this.ID, "darkness"))
-            // Can't use setFlag because at this point the tile doesn't have an id yet
-            tile.data.flags[this.ID] = { "darkness": { "enabled": false, "min": 0, "max": 1 }};
+    static async onRenderTileConfig(app, html, context) {
+        const tab = html.querySelector(`.tab[data-tab="appearance"]`);
 
-        const contents = await renderTemplate(`modules/${this.ID}/templates/tile-darkness-range.hbs`, tile);
-        html.find(`div[data-tab="basic"] .form-group`).last().after(contents);
+        if (!tab) {
+            return;
+        }
 
-        config.activateListeners(html);
-        config.setPosition({ height: "auto", width: "500" });
+        const data = {
+            enabled: false,
+            min: 0,
+            max: 1,
+            ...app.document.getFlag(this.ID, "darkness"),
+            rootId: context.rootId
+        };
+        const contents = await foundry.applications.handlebars.renderTemplate(`modules/${this.ID}/templates/tile-darkness-range.hbs`, data);
+
+        const fragment = document.createElement("template");
+        fragment.innerHTML = contents;
+
+        // A null reference node appends, so this still works if the video options are ever dropped from the tab
+        tab.insertBefore(fragment.content, tab.querySelector("fieldset[data-video-options]"));
     }
 
-    static onCloseTileConfig(config, _html) {
-        const darknessRange = config.object.getFlag(this.ID, "darkness");
+    static onCloseTileConfig(app) {
+        const tile = app.document;
 
-        if (darknessRange.enabled) {
-            config.object.update({ hidden: canvas.scene.environment.darknessLevel < darknessRange.min || canvas.scene.environment.darknessLevel > darknessRange.max });
+        // A tile that's still being created isn't in the scene's collection yet and can't be updated
+        if (!tile.collection?.has(tile.id)) {
+            return;
+        }
+
+        const darknessRange = tile.getFlag(this.ID, "darkness");
+
+        if (darknessRange?.enabled) {
+            tile.update({ hidden: canvas.environment.darknessLevel < darknessRange.min || canvas.environment.darknessLevel > darknessRange.max });
         }
     }
 
@@ -36,7 +54,7 @@ class DarknessActivatedTiles {
             const darknessRange = tile.getFlag(this.ID, "darkness");
 
             if (darknessRange.enabled) {
-                tile.update({ hidden: canvas.scene.environment.darknessLevel < darknessRange.min || canvas.scene.environment.darknessLevel > darknessRange.max });
+                tile.update({ hidden: canvas.environment.darknessLevel < darknessRange.min || canvas.environment.darknessLevel > darknessRange.max });
             }
         });
     }

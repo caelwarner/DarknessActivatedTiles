@@ -8,6 +8,16 @@
 			<label for="{{ rootId }}-darkness-max">{{ localize "LIGHT.FIELDS.darkness.max.label" }}</label>
 			<input type="number" id="{{ rootId }}-darkness-max" name="flags.darkness-activated-tiles.darkness.max" value="{{ max }}" placeholder="1" step="any" min="0" max="1">
 		</div>
+		<p class="hint">{{ localize "darkness-activated-tiles.RangeHint" }}</p>
 	</div>
-	<p class="hint">{{ localize "darkness-activated-tiles.DarknessRangeHint" }}</p>
+	<div class="form-group slim">
+		<label>{{ localize "darkness-activated-tiles.FadeDuration" }} <span class="units">({{ localize "TIME.Millisecond.abbr" }})</span></label>
+		<div class="form-fields">
+			<label for="{{ rootId }}-darkness-fade-in">{{ localize "darkness-activated-tiles.FadeIn" }}</label>
+			<input type="number" id="{{ rootId }}-darkness-fade-in" name="flags.darkness-activated-tiles.darkness.fadeIn" value="{{ fadeIn }}" placeholder="{{ defaultFadeIn }}" step="100" min="0">
+			<label for="{{ rootId }}-darkness-fade-out">{{ localize "darkness-activated-tiles.FadeOut" }}</label>
+			<input type="number" id="{{ rootId }}-darkness-fade-out" name="flags.darkness-activated-tiles.darkness.fadeOut" value="{{ fadeOut }}" placeholder="{{ defaultFadeOut }}" step="100" min="0">
+		</div>
+		<p class="hint">{{ localize "darkness-activated-tiles.FadeDurationHint" }}</p>
+	</div>
 </fieldset>

@@ -1,4 +1,12 @@
 {
-    "darkness-activated-tiles.DarknessRangeHint": "You may specify a range of darkness levels during which this tile will be visible. A range of 0 to 1 leaves the tile always visible.",
-    "darkness-activated-tiles.Range": "Range"
+    "darkness-activated-tiles.Range": "Range",
+    "darkness-activated-tiles.RangeHint": "You may specify a range of darkness levels during which this tile will be visible. A range of 0 to 1 leaves the tile always visible.",
+    "darkness-activated-tiles.FadeDuration": "Fade Duration",
+    "darkness-activated-tiles.FadeDurationHint": "How long this tile takes to fade in and out as it activates and deactivates. Leave blank to use the world defaults, or set a duration to 0 to switch instantly.",
+    "darkness-activated-tiles.FadeIn": "In",
+    "darkness-activated-tiles.FadeOut": "Out",
+    "darkness-activated-tiles.fadeIn": "Default Fade In Duration",
+    "darkness-activated-tiles.fadeInHint": "How long a tile takes to fade in when the darkness level enters its activation range, in milliseconds. Set to 0 to switch instantly. Individual tiles can override this.",
+    "darkness-activated-tiles.fadeOut": "Default Fade Out Duration",
+    "darkness-activated-tiles.fadeOutHint": "How long a tile takes to fade out when the darkness level leaves its activation range, in milliseconds. Set to 0 to switch instantly. Individual tiles can override this."
 }

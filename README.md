@@ -4,12 +4,14 @@
 
 Darkness Activated Tiles allows tiles to be hidden when the darkness level in a scene goes outside a customizable range. It works the same as the darkness activation range works with ambient lights and sounds.
 
-![Video](https://github.com/caelwarner/DarknessActivatedTiles/blob/feb436be94d8b8cf93588f0f2ac70fe1376be6ed/video.gif?raw=true)
+![Video](https://github.com/caelwarner/DarknessActivatedTiles/blob/master/docs/video.gif?raw=true)
 
 ## Usage
 
 Using Darkness Activated Tiles is simple. In a tile config menu, under the **Appearance** tab, there is a setting called **Darkness Activation Range**. Just change the values to your liking and the tile will only be visible whenever the darkness level in the scene is within the range or equal to the minimum/maximum. Leaving the range at 0 to 1 means the tile is always visible, exactly like the darkness activation range on ambient lights and sounds.
-![Tile Config](https://i.gyazo.com/114efe01cd5479b4ea87054eea276db9.png)
+![Tile Config](https://github.com/caelwarner/DarknessActivatedTiles/blob/master/docs/tile-config.png?raw=true)
+
+Tiles fade in and out as they activate and deactivate. Each tile has its own **Fade Duration** fields, and leaving them blank falls back to the world defaults under **Configure Settings**. Set a duration to 0 for an instant switch.
 
 ## Installation
 
@@ -33,6 +35,7 @@ Check the issues on this GitHub repository to see if it's already there. If not,
   - Update to FoundryVTT v13 and v14
   - Tile visibility is now worked out locally by each client, the same way ambient lights handle darkness activation. The module no longer changes a tile's Hidden setting and no longer needs a GM to be connected
   - Removed the *Enabled* toggle. A range of 0 to 1 now means the tile is always visible, matching ambient lights and sounds. Tiles that had the range disabled are reset to 0 to 1 automatically, and tiles hidden by earlier versions are unhidden
+  - Added fade in and fade out durations, configurable per tile with world level defaults. Thanks to [@Oxy949](https://github.com/Oxy949), whose PR #11 prompted this
   - Fixed tiles not updating when the darkness level changed if any tile in the scene had never been configured (#10)
   - Fixed a conflict with Monk's Active Tile Triggers that stopped its trigger dropdown from opening (#7)
 - 1.2:

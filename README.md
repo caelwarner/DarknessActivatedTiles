@@ -8,7 +8,7 @@ Darkness Activated Tiles allows tiles to be hidden when the darkness level in a 
 
 ## Usage
 
-Using Darkness Activated Tiles is simple. In a tile config menu, under the **Appearance** tab, there is a setting called **Darkness Activation Range**. Just clicked *Enabled* and then change the values to your liking. The tile will then only be visible whenever the darkness level in the scene is within the range or equal to the minimum/maximum.
+Using Darkness Activated Tiles is simple. In a tile config menu, under the **Appearance** tab, there is a setting called **Darkness Activation Range**. Just change the values to your liking and the tile will only be visible whenever the darkness level in the scene is within the range or equal to the minimum/maximum. Leaving the range at 0 to 1 means the tile is always visible, exactly like the darkness activation range on ambient lights and sounds.
 ![Tile Config](https://i.gyazo.com/114efe01cd5479b4ea87054eea276db9.png)
 
 ## Installation
@@ -31,6 +31,10 @@ Check the issues on this GitHub repository to see if it's already there. If not,
 
 - 1.3:
   - Update to FoundryVTT v13 and v14
+  - Tile visibility is now worked out locally by each client, the same way ambient lights handle darkness activation. The module no longer changes a tile's Hidden setting and no longer needs a GM to be connected
+  - Removed the *Enabled* toggle. A range of 0 to 1 now means the tile is always visible, matching ambient lights and sounds. Tiles that had the range disabled are reset to 0 to 1 automatically, and tiles hidden by earlier versions are unhidden
+  - Fixed tiles not updating when the darkness level changed if any tile in the scene had never been configured (#10)
+  - Fixed a conflict with Monk's Active Tile Triggers that stopped its trigger dropdown from opening (#7)
 - 1.2:
   - Update to FoundryVTT v12
 - 1.1:
